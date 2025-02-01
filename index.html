@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>抖音风格视频播放</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            background-color: black;
+            overflow-y: scroll;
+            scroll-snap-type: y mandatory;
+        }
+        .video-container {
+            width: 100%;
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            scroll-snap-align: start;
+        }
+        video {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        .overlay {
+            position: absolute;
+            bottom: 10%;
+            left: 5%;
+            color: white;
+            font-size: 18px;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="video-container">
+        <video src="video1.mp4" muted loop playsinline></video>
+        <div class="overlay">幸福开始有预兆 2024-01-16</div>
+    </div>
+
+    <div class="video-container">
+        <video src="video2.mp4" muted loop playsinline></video>
+        <div class="overlay">视频2 - 抖音风格</div>
+    </div>
+
+    <div class="video-container">
+        <video src="video3.mp4" muted loop playsinline></video>
+        <div class="overlay">视频3 - 抖音风格</div>
+    </div>
+
+    <script>
+        // 获取所有视频元素
+        const videos = document.querySelectorAll("video");
+
+        // 监听滚动事件
+        function handleVideoPlayback() {
+            videos.forEach(video => {
+                const rect = video.getBoundingClientRect();
+                if (rect.top >= 0 && rect.bottom <= window.innerHeight) {
+                    video.play();
+                } else {
+                    video.pause();
+                }
+            });
+        }
+
+        // 页面加载时和滚动时检查
+        window.addEventListener("load", handleVideoPlayback);
+        window.addEventListener("scroll", handleVideoPlayback);
+    </script>
+
+</body>
+</html>
