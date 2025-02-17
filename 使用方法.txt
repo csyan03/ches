@@ -1,0 +1,9 @@
+参数列表
+url=输入你的视频地址
+type=json/dplayer
+
+例如以下
+url/?url=视频地址&type=json/dplayer
+
+使用说明
+下载 上传到服务器 解压即可使用
