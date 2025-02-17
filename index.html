@@ -1,109 +1,116 @@
 <!DOCTYPE html>
-<html lang="zh">
+<html lang="zh-CN">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="referrer" content="never">
-  <title>腾讯视频VIP解析</title>
-  <link rel="shortcut icon" href="favicon.png">
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/dplayer/dist/DPlayer.min.css">
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      margin: 0;
-      padding: 0;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      height: 100vh;
-      background-color: #f4f4f4;
-    }
-    #dplayer1 {
-      width: 80%;
-      max-width: 800px;
-      margin: auto;
-    }
-    .form-container {
-      position: absolute;
-      top: 20px;
-      left: 50%;
-      transform: translateX(-50%);
-      background-color: rgba(255, 255, 255, 0.8);
-      padding: 10px;
-      border-radius: 10px;
-      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-    }
-    .form-container input {
-      padding: 5px;
-      margin-right: 10px;
-      border: 1px solid #ccc;
-      border-radius: 5px;
-    }
-    .form-container button {
-      padding: 6px 15px;
-      background-color: #4CAF50;
-      border: none;
-      border-radius: 5px;
-      color: white;
-      cursor: pointer;
-    }
-    .form-container button:hover {
-      background-color: #45a049;
-    }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>腾讯视频VIP解析工具</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            max-width: 800px;
+            margin: 20px auto;
+            padding: 0 20px;
+        }
+        .container {
+            background: #f5f5f5;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+            color: #333;
+            font-weight: 500;
+        }
+        input[type="text"], select {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+        button {
+            background: #007bff;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+        button:hover {
+            background: #0056b3;
+        }
+        #result {
+            margin-top: 20px;
+            white-space: pre-wrap;
+            background: white;
+            padding: 15px;
+            border-radius: 4px;
+        }
+        .loading {
+            display: none;
+            margin: 10px 0;
+            color: #666;
+        }
+    </style>
 </head>
 <body>
+    <div class="container">
+        <h2>腾讯视频VIP解析工具</h2>
+        <div class="form-group">
+            <label for="videoUrl">视频地址：</label>
+            <input type="text" id="videoUrl" placeholder="请输入腾讯视频地址">
+        </div>
+        <div class="form-group">
+            <label for="outputType">输出类型：</label>
+            <select id="outputType">
+                <option value="dplayer">在线播放</option>
+                <option value="json">JSON数据</option>
+            </select>
+        </div>
+        <button onclick="handleSubmit()">开始解析</button>
+        <div class="loading" id="loading">解析中...</div>
+        <div id="result"></div>
+    </div>
 
-  <div class="form-container">
-    <input type="text" id="video-url" placeholder="请输入腾讯视频的链接" style="width: 250px;">
-    <button onclick="parseVideo()">解析视频</button>
-  </div>
+    <script>
+        function handleSubmit() {
+            const videoUrl = document.getElementById('videoUrl').value;
+            const outputType = document.getElementById('outputType').value;
+            const resultDiv = document.getElementById('result');
+            const loading = document.getElementById('loading');
 
-  <div id="dplayer1"></div>
-
-  <script src="https://cdn.jsdelivr.net/npm/hls.js/dist/hls.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/dplayer/dist/DPlayer.min.js"></script>
-  <script>
-    function parseVideo() {
-      const videoUrl = document.getElementById('video-url').value;
-      if (!videoUrl) {
-        alert('请先输入腾讯视频的链接');
-        return;
-      }
-
-      // 构造请求URL
-      const urlParams = new URLSearchParams();
-      urlParams.set('url', videoUrl);
-      urlParams.set('type', 'json');
-
-      fetch(`./index.php?${urlParams.toString()}`).then(res => {
-        if (res.ok) {
-          res.json().then(data => {
-            if (data.code === 0) {
-              // 解析成功，初始化播放器
-              new DPlayer({
-                container: document.getElementById('dplayer1'),
-                video: {
-                  url: data.url.replace(/^https?\:\/\//i, 'https://'),
-                  type: 'hls'
-                }
-              });
-            } else {
-              alert('解析失败，请检查链接是否正确');
+            if (!videoUrl) {
+                alert('请输入视频地址');
+                return;
             }
-          }).catch(err => {
-            console.error(err);
-            alert('解析过程中出现错误');
-          });
-        } else {
-          alert('请求失败，请稍后再试');
-        }
-      }).catch(err => {
-        console.error(err);
-        alert('请求发生错误');
-      });
-    }
-  </script>
 
+            loading.style.display = 'block';
+            resultDiv.innerHTML = '';
+
+            if (outputType === 'dplayer') {
+                // 直接跳转播放页面
+                window.location.href = `./index.php?url=${encodeURIComponent(videoUrl)}&type=dplayer`;
+            } else {
+                // 显示JSON结果
+                fetch(`./index.php?url=${encodeURIComponent(videoUrl)}&type=json`)
+                    .then(response => response.json())
+                    .then(data => {
+                        resultDiv.innerHTML = JSON.stringify(data, null, 4);
+                    })
+                    .catch(error => {
+                        resultDiv.innerHTML = `请求失败：${error.message}`;
+                    })
+                    .finally(() => {
+                        loading.style.display = 'none';
+                    });
+            }
+        }
+    </script>
 </body>
 </html>
