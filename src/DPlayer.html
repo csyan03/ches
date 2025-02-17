@@ -1,1 +1,39 @@
+<html>
 
+<head>
+  <meta content="text/html; charset=utf-8" http-equiv="Content-Type">
+  <meta name="referrer" content="never">
+  <title>腾讯视频VIP解析</title>
+  <link rel="shortcut icon" href="favicon.png">
+</head>
+
+<body>
+  <div id="dplayer1"></div>
+  <script src="https://cdn.jsdelivr.net/npm/hls.js/dist/hls.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/dplayer/dist/DPlayer.min.js"></script>
+  <script>
+    const params = window.location.search.substring(1).split('&')
+    const map = {
+      url: ''
+    }
+    for (let i = 0; i < params.length; i++) {
+      const pair = params[i].split('=')
+      map[pair[0]] = pair[1]
+    }
+    fetch(`./index.php?url=${map['url']}&type=json`).then(res => {
+      if (res.ok) {
+        res.json().then(data => {
+          new DPlayer({
+            container: document.getElementById('dplayer1'),
+            video: {
+              url: data.url.replace(/^https?\:\/\//i, 'https://'),
+              type: 'auto'
+            }
+          })
+        })
+      }
+    })
+  </script>
+</body>
+
+</html>
